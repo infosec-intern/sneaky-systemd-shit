@@ -1,0 +1,12 @@
+; https://www.freedesktop.org/software/systemd/man/systemd.service.html
+[Unit]
+Description=Basic service
+Documentation=https://github.com/infosec-intern/sneaky-systemd-shit
+
+[Install]
+Alias=helloworld.service
+
+[Service]
+Type=oneshot
+ExecStart=echo "hello world"
+
