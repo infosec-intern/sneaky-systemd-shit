@@ -1,4 +1,4 @@
-# systemd-fun
+# Sneaky systemd Shit
 A simple repository for tracking the many ways to turn [systemd](https://www.freedesktop.org/wiki/Software/systemd/) into an offensive tool
 
 ## Mindset
