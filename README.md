@@ -88,6 +88,19 @@ Techniques that allow the adversary to gain knowledge about the system and inter
   * `systemctl --user` modifies the command to use the current user's context instead of the system manager (e.g. `systemctl list-units --user`)
   * `systemd-analyze unit-paths` displays the current list of paths that systemd units are loaded from
   * `systemd-analyze --user unit-paths` displays the current list of paths that a regular user can use to load systemd units
+    * If this is not available, `systemctl` can be substituted like below:
+    ```sh
+    $ for p in $(systemctl --user show -p UnitPath | cut -d= -f2); do echo $p; done
+    /home/privileged/.config/systemd/user
+    /etc/systemd/user
+    /run/user/1000/systemd/user
+    /run/systemd/user
+    /home/privileged/.local/share/systemd/user
+    /usr/local/share/systemd/user
+    /usr/share/systemd/user
+    /usr/local/lib/systemd/user
+    /usr/lib/systemd/user
+    ```
   * `systemd-path` displays a list of paths with human-readable purposes (e.g. temporary: /tmp)
 * [Busctl](https://www.freedesktop.org/software/systemd/man/busctl.html) (?)
   * Introspect and monitor the D-Bus bus
