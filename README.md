@@ -50,8 +50,21 @@ Techniques an adversary may use to evade detection or avoid other defenses.
 
 * [Machinectl](https://www.freedesktop.org/software/systemd/man/machinectl.html)
   * Interact with systemd virtual machines and the container registration manager
-  * On Ubuntu, part of the `systemd-container` package
-  * Seems to be available in a default install of Arch Linux
+  * Part of the `systemd-container` package on Ubuntu
+  * Available in a default install of Arch Linux
+  * Privileged login required to access a shell
+  ```sh
+  $ machinectl --uid=1001 shell
+  ==== AUTHENTICATING FOR org.freedesktop.machine1.host-shell ===
+  Authentication is required to acquire a shell on the local host.
+  Authenticating as: ,,, (privileged)
+  Password:
+  ==== AUTHENTICATION COMPLETE ===
+  Connected to the local host. Press ^] three times within 1s to exit session.
+  $ id
+  uid=1001(unprivileged) gid=1001(unprivileged) groups=1001(unprivileged)
+  $ 
+  ```
 * [Refuse Unit Deactivation](https://www.freedesktop.org/software/systemd/man/systemd.unit.html#RefuseManualStart=)
   * A couple Unit directives, `RefuseManualStart=` and `RefuseManualStop=`, give the unit writer control over whether a normal user can start/stop a given unit
     * Super interesting for anti-analysis
