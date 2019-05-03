@@ -71,7 +71,7 @@ Techniques an adversary may use to evade detection or avoid other defenses.
 * [systemd-detect-virt](https://www.freedesktop.org/software/systemd/man/systemd-detect-virt.html)
   * Detect if systemd is running in a VM. Example below is in a new Ubuntu 16.04.6 server on Digital Ocean
   ```sh
-  ~$ systemd-detect-virt
+  $ systemd-detect-virt
   kvm
   ```
 
@@ -88,6 +88,7 @@ Techniques that allow the adversary to gain knowledge about the system and inter
   * `systemctl --user` modifies the command to use the current user's context instead of the system manager (e.g. `systemctl list-units --user`)
   * `systemd-analyze unit-paths` displays the current list of paths that systemd units are loaded from
   * `systemd-analyze --user unit-paths` displays the current list of paths that a regular user can use to load systemd units
+  * `systemd-path` displays a list of paths with human-readable purposes (e.g. temporary: /tmp)
 * [Busctl](https://www.freedesktop.org/software/systemd/man/busctl.html) (?)
   * Introspect and monitor the D-Bus bus
   * MIGHT be helpful to monitor or inspect buses of various units
