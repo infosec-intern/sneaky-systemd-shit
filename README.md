@@ -54,7 +54,11 @@ Techniques an adversary may use to evade detection or avoid other defenses.
   * A couple Unit directives, `RefuseManualStart=` and `RefuseManualStop=`, give the unit writer control over whether a normal user can start/stop a given unit
     * Super interesting for anti-analysis
 * [systemd-detect-virt](https://www.freedesktop.org/software/systemd/man/systemd-detect-virt.html)
-  * Detect if systemd is running in a VM. Pretty self-explanatory
+  * Detect if systemd is running in a VM. Example below is in a new Ubuntu 16.04.6 server on Digital Ocean
+  ```sh
+  ~$ systemd-detect-virt
+  kvm
+  ```
 
 ### Credential Access
 Techniques resulting in access to or control over system, domain, or service credentials that are used within an enterprise environment.
