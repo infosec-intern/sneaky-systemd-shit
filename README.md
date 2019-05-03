@@ -50,6 +50,8 @@ Techniques an adversary may use to evade detection or avoid other defenses.
 
 * [Machinectl](https://www.freedesktop.org/software/systemd/man/machinectl.html)
   * Interact with systemd virtual machines and the container registration manager
+  * On Ubuntu, part of the `systemd-container` package
+  * Seems to be available in a default install of Arch Linux
 * [Refuse Unit Deactivation](https://www.freedesktop.org/software/systemd/man/systemd.unit.html#RefuseManualStart=)
   * A couple Unit directives, `RefuseManualStart=` and `RefuseManualStop=`, give the unit writer control over whether a normal user can start/stop a given unit
     * Super interesting for anti-analysis
