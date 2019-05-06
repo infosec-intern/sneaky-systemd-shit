@@ -8,5 +8,5 @@ Alias=helloworld.service
 
 [Service]
 Type=oneshot
-ExecStart=echo "hello world"
+ExecStart=/bin/echo "hello world"
 
