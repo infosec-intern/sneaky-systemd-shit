@@ -27,6 +27,26 @@ Represents techniques that result in execution of adversary-controlled code on a
     * requires: Same as above, but with `foo.service.requires/` and the `Requires=` directive
     * drop-ins: A drop-in directory can also be created (`foo.service.d/`) to load .conf files into the unit
       * These must be placed in either the same directory that the service is in, so system-level and user-level cannot intermingle
+* [Tmpfiles]()
+  * `systemd-tmpfiles` is a system for handling temporary files (creating, deleting, truncating files, named pipes, etc.)
+  * This command is automatically scheduled by systemd under certain scenarios
+  * Can be used to write things to disk on shutdown and load them into memory on boot
+  * Below, there is a file, `on-shutdown.conf`, which creates a file in `/tmp/saved.txt` and a file, `on-boot.conf`, which deletes it
+    ```sh
+    $ cat on-shutdown.conf
+      #Type   Path            Mode    User    Group   Age     Argument
+      # create/truncate saved.txt and write a command out to it
+      F       /tmp/saved.txt  0700    1000    1000    1h      -
+      w       /tmp/saved.txt  0700    1000    1000    -       /bin/echo "hello world"
+    $ systemd-tmpfiles --create 2>/dev/null; ls /tmp
+      saved.txt
+    $ cat on-boot.conf
+      #Type   Path            Mode    User    Group   Age     Argument
+      # only delete saved.txt on boot (hence the !)
+      r       /tmp/saved.txt  -       -       -       0
+    $ systemd-tmpfiles --remove 2>/dev/null; ls /tmp
+
+  ```
 
 ### Persistence
 Any access, action, or configuration change to a system that gives an adversary a persistent presence on that system.
