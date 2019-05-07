@@ -27,7 +27,7 @@ Represents techniques that result in execution of adversary-controlled code on a
     * requires: Same as above, but with `foo.service.requires/` and the `Requires=` directive
     * drop-ins: A drop-in directory can also be created (`foo.service.d/`) to load .conf files into the unit
       * These must be placed in either the same directory that the service is in, so system-level and user-level cannot intermingle
-* [Tmpfiles]()
+* [Tmpfiles](https://www.freedesktop.org/software/systemd/man/systemd-tmpfiles.html)
   * `systemd-tmpfiles` is a system for handling temporary files (creating, deleting, truncating files, named pipes, etc.)
   * This command is automatically scheduled by systemd under certain scenarios
   * Can be used to write things to disk on shutdown and load them into memory on boot (names used for clarity - they aren't special triggers)
