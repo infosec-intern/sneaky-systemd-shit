@@ -45,8 +45,7 @@ Represents techniques that result in execution of adversary-controlled code on a
       # only delete saved.txt on boot (hence the !)
       r       /tmp/saved.txt  -       -       -       0
     $ systemd-tmpfiles --remove 2>/dev/null; ls /tmp
-
-  ```
+    ```
 
 ### Persistence
 Any access, action, or configuration change to a system that gives an adversary a persistent presence on that system.
