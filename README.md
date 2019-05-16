@@ -140,3 +140,18 @@ Techniques and attributes that result or aid in the adversary removing files and
 ### Command and Control
 Represents how adversaries communicate with systems under their control within a target network.
 
+##### DNS
+* [systemd-resolve](https://www.freedesktop.org/software/systemd/man/systemd-resolved.html)
+  * Can be used to perform DNS tunneling just like `nslookup.exe` is used on Windows systems
+  ```sh
+  $ systemd-resolve --protocol dns --type mx google.com
+    google.com. IN MX    20 alt1.aspmx.l.google.com
+    google.com. IN MX    30 alt2.aspmx.l.google.com
+    google.com. IN MX    40 alt3.aspmx.l.google.com
+    google.com. IN MX    10 aspmx.l.google.com
+    google.com. IN MX    50 alt4.aspmx.l.google.com
+
+    -- Information acquired via protocol DNS in 6.9ms.
+    -- Data is authenticated: no
+  ```
+
