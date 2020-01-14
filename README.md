@@ -105,6 +105,10 @@ Techniques an adversary may use to evade detection or avoid other defenses.
   $ systemd-detect-virt
   kvm
   ```
+* [being an annoying shit]
+  * systemd can manage multiple unit files at once by specifying them separated with spaces
+  * (Speculation) You can force systemd to manage other services if you name yours like them, but with spaces
+     `ssh\ apache.service` != `ssh.service` `apache.service`
 
 ### Credential Access
 Techniques resulting in access to or control over system, domain, or service credentials that are used within an enterprise environment.
