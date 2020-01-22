@@ -1,11 +1,14 @@
 # Sneaky systemd Shit
+
 A simple repository for tracking the many ways to turn [systemd](https://www.freedesktop.org/wiki/Software/systemd/) into an offensive tool
 
 ## Mindset
+
 I'll be using the [MITRE ATT&CK](https://attack.mitre.org/) framework to guide techniques here,
  and I'll explain the similarities and differences between systemd on Linux and the equivalent technique on Windows, if one exists.
 
 ## The Goods
+
 * [Examples/BasicService](Examples/BasicService/BasicService.md)
 * [Examples/ScheduledReverseShell](Examples/ScheduledReverseShell/ScheduledRevShell.md)
 
@@ -17,12 +20,15 @@ I'll be using the [MITRE ATT&CK](https://attack.mitre.org/) framework to guide t
   * systemd's configuration file format. Every unit file type (service, timer, device, etc.) must follow a similar syntax
 
 ## Enterprise Tactics
-https://attack.mitre.org/tactics/enterprise/
+
+<https://attack.mitre.org/tactics/enterprise/>
 
 ### Initial Access
+
 Represents the vectors adversaries use to gain an initial foothold within a network.
 
 ### Execution
+
 Represents techniques that result in execution of adversary-controlled code on a local or remote system.
 
 * [Unit Hooking](https://www.freedesktop.org/software/systemd/man/systemd.unit.html#Description)
@@ -35,6 +41,7 @@ Represents techniques that result in execution of adversary-controlled code on a
   * `systemd-tmpfiles` is a system for handling temporary files (creating, deleting, truncating files, named pipes, etc.)
   * This command is automatically scheduled by systemd under certain scenarios
   * Can be used to write things to disk on shutdown and load them into memory on boot (names used for clarity - they aren't special triggers)
+
     ```sh
     $ cat on-shutdown.conf
       #Type   Path            Mode    User    Group   Age     Argument
@@ -49,9 +56,11 @@ Represents techniques that result in execution of adversary-controlled code on a
       #Type   Path            Mode    User    Group   Age     Argument
       r       /tmp/saved.txt  -       -       -       0
     $ systemd-tmpfiles --remove on-boot.conf 2>/dev/null; ls /tmp
+    $
     ```
 
 ### Persistence
+
 Any access, action, or configuration change to a system that gives an adversary a persistent presence on that system.
 
 * [Services](https://www.freedesktop.org/software/systemd/man/systemd.service.htm)
@@ -66,9 +75,11 @@ Any access, action, or configuration change to a system that gives an adversary 
     3. `systemctl --user start $SERVICE` to run the code in the `ExecStart=` directive
 
 ### Privilege Escalation
+
 The result of actions that allows an adversary to obtain a higher level of permissions on a system or network.
 
 ### Defense Evasion
+
 Techniques an adversary may use to evade detection or avoid other defenses.
 
 * [Machinectl](https://www.freedesktop.org/software/systemd/man/machinectl.html)
@@ -76,6 +87,7 @@ Techniques an adversary may use to evade detection or avoid other defenses.
   * Part of the `systemd-container` package on Ubuntu
   * Available in a default install of Arch Linux
   * Privileged login required to access a shell
+
   ```sh
   $ machinectl --uid=1001 shell
   ==== AUTHENTICATING FOR org.freedesktop.machine1.host-shell ===
@@ -88,24 +100,29 @@ Techniques an adversary may use to evade detection or avoid other defenses.
   uid=1001(unprivileged) gid=1001(unprivileged) groups=1001(unprivileged)
   $
   ```
+
 * [Refuse Unit Deactivation](https://www.freedesktop.org/software/systemd/man/systemd.unit.html#RefuseManualStart=)
   * A couple Unit directives, `RefuseManualStart=` and `RefuseManualStop=`, give the unit writer control over whether a normal user can start/stop a given unit
     * Super interesting for anti-analysis
 * [systemd-detect-virt](https://www.freedesktop.org/software/systemd/man/systemd-detect-virt.html)
   * Detect if systemd is running in a VM. Example below is in a new Ubuntu 16.04.6 server on Digital Ocean
+
   ```sh
   $ systemd-detect-virt
   kvm
   ```
+
 * [being an annoying shit]
   * systemd can manage multiple unit files at once by specifying them separated with spaces
   * (Speculation) You can force systemd to manage other services if you name yours like them, but with spaces
      `ssh\ apache.service` != `ssh.service` `apache.service`
 
 ### Credential Access
+
 Techniques resulting in access to or control over system, domain, or service credentials that are used within an enterprise environment.
 
 ### Discovery
+
 Techniques that allow the adversary to gain knowledge about the system and internal network.
 
 * [systemctl](https://www.freedesktop.org/software/systemd/man/systemctl.html)
@@ -116,6 +133,7 @@ Techniques that allow the adversary to gain knowledge about the system and inter
   * `systemd-analyze unit-paths` displays the current list of paths that systemd units are loaded from
   * `systemd-analyze --user unit-paths` displays the current list of paths that a regular user can use to load systemd units
     * If this is not available, `systemctl` can be substituted like below:
+
     ```sh
     $ for p in $(systemctl --user show -p UnitPath | cut -d= -f2); do echo $p; done
     /home/privileged/.config/systemd/user
@@ -128,6 +146,7 @@ Techniques that allow the adversary to gain knowledge about the system and inter
     /usr/local/lib/systemd/user
     /usr/lib/systemd/user
     ```
+
   * `systemd-path` displays a list of paths with human-readable purposes (e.g. temporary: /tmp)
 * [Busctl](https://www.freedesktop.org/software/systemd/man/busctl.html) (?)
   * Introspect and monitor the D-Bus bus
@@ -137,20 +156,26 @@ Techniques that allow the adversary to gain knowledge about the system and inter
   * Could be good for fingerprinting, identifying VMs (see Defense Evasion), identifying security features, or limiting execution to specific hosts
 
 ### Lateral Movement
+
 Techniques that enable an adversary to access and control remote systems on a network.
 
 ### Collection
+
 Techniques used to identify and gather information, such as sensitive files, from a target network prior to exfiltration.
 
 ### Exfiltration
+
 Techniques and attributes that result or aid in the adversary removing files and information from a target network.
 
 ### Command and Control
+
 Represents how adversaries communicate with systems under their control within a target network.
 
-##### DNS
+#### DNS
+
 * [systemd-resolve](https://www.freedesktop.org/software/systemd/man/systemd-resolved.html)
   * Can be used to perform DNS tunneling just like `nslookup.exe` is used on Windows systems
+
   ```sh
   $ systemd-resolve --protocol dns --type mx google.com
     google.com. IN MX    20 alt1.aspmx.l.google.com
@@ -162,4 +187,3 @@ Represents how adversaries communicate with systems under their control within a
     -- Information acquired via protocol DNS in 6.9ms.
     -- Data is authenticated: no
   ```
-

