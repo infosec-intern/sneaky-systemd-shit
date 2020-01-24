@@ -42,8 +42,8 @@ ln -s `pwd`/fake.service ~/.config/systemd/user/
 ```sh
 systemctl --user start fake
 $ journalctl -e | grep "fake.service" -B1
-Jan 21 09:35:42 colossus echo[26493]: hello world
-Jan 21 09:35:42 colossus systemd[2006]: fake.service: Succeeded.
+Jan 21 09:35:42 localhost echo[26493]: hello world
+Jan 21 09:35:42 localhost systemd[2006]: fake.service: Succeeded.
 ```
 
 4. Add in the configuration file and folder
@@ -73,7 +73,7 @@ ExecStart=/bin/echo "hello mars"
 ```sh
 systemctl --user start fake
 $ journalctl -e | grep "fake.service" -B2
-Jan 21 09:39:11 colossus echo[26747]: hello world
-Jan 21 09:39:11 colossus echo[26748]: hello mars
-Jan 21 09:39:11 colossus systemd[2006]: fake.service: Succeeded.
+Jan 21 09:39:11 localhost echo[26747]: hello world
+Jan 21 09:39:11 localhost echo[26748]: hello mars
+Jan 21 09:39:11 localhost systemd[2006]: fake.service: Succeeded.
 ```

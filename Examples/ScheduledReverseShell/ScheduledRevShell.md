@@ -20,7 +20,7 @@ The service file (`revshell.service`) uses:
   * systemd will not wait until the timer gets scheduled again
   * e.g. 4.5 minutes after initial run on a per-minute timer
 
-    ```
+    ```txt
     [1]       [2]        [3]        [4]          [5]
     run-------skip-------skip-------skip-die-run-skip
     ```
