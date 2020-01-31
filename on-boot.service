@@ -1,7 +1,0 @@
-[Unit]
-Description=Run a set of commands from disk before shutdown
-After=local-fs.target
-
-[Service]
-Type=oneshot
-ExecStart=/bin/sh /tmp/saved.txt

@@ -10,6 +10,7 @@ I'll be using the [MITRE ATT&CK](https://attack.mitre.org/) framework to guide t
 ## The Goods
 
 * [Examples/BasicService](Examples/BasicService/BasicService.md)
+* [Examples/Autoruns](Examples/Autoruns/Autoruns.md)
 * [Examples/ScheduledReverseShell](Examples/ScheduledReverseShell/ScheduledRevShell.md)
 * [Examples/TmpFiles](Examples/TmpFiles/TmpFiles.md)
 
@@ -163,6 +164,13 @@ Techniques that enable an adversary to access and control remote systems on a ne
 ### Collection
 
 Techniques used to identify and gather information, such as sensitive files, from a target network prior to exfiltration.
+
+* Show running processes with cgroups
+
+```sh
+$ alias psc='ps xawf -eo pid,user,cgroup,args'
+$
+```
 
 ### Exfiltration
 

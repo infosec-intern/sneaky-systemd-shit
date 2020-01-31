@@ -1,8 +1,0 @@
-[Unit]
-Description=Save a set of commands to disk before shutdown
-Before=shutdown.target
-
-[Service]
-Type=oneshot
-ExecStart=/bin/cat /tmp/saved.txt
-
