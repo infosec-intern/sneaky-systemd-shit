@@ -53,7 +53,7 @@ drwxr-xr-x 2 root root 4096 Dec 20 09:30 /etc/systemd/system/graphical.target.wa
 drwxr-xr-x 2 root root 4096 Dec 20 09:11 /usr/lib/systemd/system/graphical.target.wants
 ```
 
-4. Install the service
+4. Install the service (root required)
 
 ```sh
 $ sudo ln -s `pwd`/autorun.service /etc/systemd/system/graphical.target.wants

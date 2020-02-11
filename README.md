@@ -107,12 +107,19 @@ Techniques an adversary may use to evade detection or avoid other defenses.
   * A couple Unit directives, `RefuseManualStart=` and `RefuseManualStop=`, give the unit writer control over whether a normal user can start/stop a given unit
     * Super interesting for anti-analysis
 * [systemd-detect-virt](https://www.freedesktop.org/software/systemd/man/systemd-detect-virt.html)
-  * Detect if systemd is running in a VM. Example below is in a new Ubuntu 16.04.6 server on Digital Ocean
+  * Detect if systemd is running in a VM. Also done in the [ConditionVirtualization](https://www.freedesktop.org/software/systemd/man/systemd.unit.html#ConditionVirtualization=) option of unit files.
+    Example below is in a new Ubuntu 16.04.6 server on Digital Ocean:
 
   ```sh
   $ systemd-detect-virt
   kvm
   ```
+
+* [ConditionSecurity](https://www.freedesktop.org/software/systemd/man/systemd.unit.html#ConditionSecurity=)
+  * Enable or disable (by negating with `!`) a unit from running if a given security technology is deployed on the system
+  * All `Condition*` options in unit files have an equivalent `Assert*` option that fails loudly if the condition is not met.
+    This is probably not too useful to hiding on a system (easier to get caught) but could be used by security tools to loudly
+    show they were disabled
 
 * [being an annoying shit]
   * systemd can manage multiple unit files at once by specifying them separated with spaces
