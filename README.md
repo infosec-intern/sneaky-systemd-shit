@@ -11,7 +11,8 @@ I'll be using the [MITRE ATT&CK](https://attack.mitre.org/) framework to guide t
 
 * [Examples/BasicService](Examples/BasicService/BasicService.md)
 * [Examples/Autoruns](Examples/Autoruns/Autoruns.md)
-* [Examples/ScheduledReverseShell](Examples/ScheduledReverseShell/ScheduledRevShell.md)
+* [Examples/ProxyExecution](Examples/ProxyExecution/ProxyExecution.md)
+* [Examples/ScheduledReverseShell](Examples/ScheduledReverseShell/ScheduledReverseShell.md)
 * [Examples/TmpFiles](Examples/TmpFiles/TmpFiles.md)
 
 ## Basic Components
@@ -69,6 +70,9 @@ Any access, action, or configuration change to a system that gives an adversary 
   * systemd's bread and butter. Controls how systemd interacts with processes, including managing daemons
   * Before= and After= in a service file MIGHT be used alongside `shutdown.target` and `local-fs.target`, respectively, to load a file into memory and write to-disk to maintain persistence
     * `local-fs.target` is needed instead of `boot-complete.target` to ensure the system has the filesystem loaded
+  * Path-based activation is possible with `.path` unit files. See: <https://www.freedesktop.org/software/systemd/man/systemd.path.html>
+    * sytemd will monitor a chosen filepath with inotify and trigger a service when a change occurs
+    * These can also be used to create directories to watch without spawning a `mkdir` process or similar
 * User-Mode
   * Many systemd commands can use the `--user` flag to stay within the current user's context and not trigger an admin password prompt
   * The following workflow would allow someone with only user permissions to execute code

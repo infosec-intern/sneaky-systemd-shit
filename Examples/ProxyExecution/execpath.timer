@@ -1,0 +1,7 @@
+; https://www.freedesktop.org/software/systemd/man/systemd.timer.html
+[Timer]
+AccuracySec=1s
+OnCalendar=*-*-* *:*:00
+Unit=execshell.path
+RandomizedDelaySec=4s
+Persistent=true
