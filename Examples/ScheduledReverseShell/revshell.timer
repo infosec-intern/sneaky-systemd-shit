@@ -1,3 +1,4 @@
+; https://www.freedesktop.org/software/systemd/man/systemd.timer.html
 [Timer]
 AccuracySec=1s
 OnCalendar=*-*-* *:*:00

@@ -11,8 +11,18 @@ The service file (`revshell.service`) uses:
 * The `ExecStartPre` directive to check fo the FIFO pipe and create it if it does not exist
 * The `ExecStart` directive to execute the backdoor sequence (more info on how it works located in the linked blog below)
 
+The timer file (`revshell.timer`) uses:
+
+* The `AccuracySec` directive to align service execution with the wider system
+* The `OnCalendar` directive to execute the specified unit at the start of every minute
+* The `Unit` directive to identify the unit file to execute when the timer is triggered
+* The `RandomizedDelaySec` to avoid simple beacon detections
+* The `Persistent` directive to reactivate this timer immediately if it missed previous activations
+
 ## Additional Notes
 
+* The reverse shell service does not end when the shell drops; systemd still considers the service "activated"
+  after the main (`ExecStart`) process dies
 * The `.timer` file ensures the backdoor gets re-run if the shell drops
 * systemd only runs the next scheduled task if the previous task has ended
   * Avoids unnecessary logs
