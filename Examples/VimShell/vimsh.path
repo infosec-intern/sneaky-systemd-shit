@@ -1,0 +1,4 @@
+; https://www.freedesktop.org/software/systemd/man/systemd.path.html
+[Path]
+PathModified=/tmp/vimsh.txt
+Unit=execshell.service

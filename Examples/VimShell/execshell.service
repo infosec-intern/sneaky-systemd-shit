@@ -1,0 +1,10 @@
+; https://www.freedesktop.org/software/systemd/man/systemd.service.html
+[Unit]
+Description=Execute shell commands in the given input file
+
+[Service]
+Type=simple
+StandardInput=file:/tmp/vimsh.txt
+StandardOutput=file:/tmp/vimsh.out
+ExecStartPre=/bin/sh -c "find /tmp/vimsh.out || mknod --mode=0666 /tmp/vimsh.out p"
+ExecStart=/bin/sh

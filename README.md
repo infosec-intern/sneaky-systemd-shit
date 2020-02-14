@@ -14,6 +14,7 @@ I'll be using the [MITRE ATT&CK](https://attack.mitre.org/) framework to guide t
 * [Examples/ProxyExecution](Examples/ProxyExecution/ProxyExecution.md)
 * [Examples/ScheduledReverseShell](Examples/ScheduledReverseShell/ScheduledReverseShell.md)
 * [Examples/TmpFiles](Examples/TmpFiles/TmpFiles.md)
+* [Examples/VimShell](Examples/VimShell/VimShell.md)
 
 ## Basic Components
 
