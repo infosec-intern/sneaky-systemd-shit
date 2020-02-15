@@ -11,6 +11,7 @@ I'll be using the [MITRE ATT&CK](https://attack.mitre.org/) framework to guide t
 
 * [Examples/BasicService](Examples/BasicService/BasicService.md)
 * [Examples/Autoruns](Examples/Autoruns/Autoruns.md)
+* [Examples/BindShell](Examples/BindShell/BindShell.md)
 * [Examples/ProxyExecution](Examples/ProxyExecution/ProxyExecution.md)
 * [Examples/ScheduledReverseShell](Examples/ScheduledReverseShell/ScheduledReverseShell.md)
 * [Examples/TmpFiles](Examples/TmpFiles/TmpFiles.md)
