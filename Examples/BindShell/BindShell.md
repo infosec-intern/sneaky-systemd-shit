@@ -53,7 +53,7 @@ $ cat bindsh@.service
 ; https://www.freedesktop.org/software/systemd/man/systemd.service.html
 [Unit]
 Description=A simple bind shell - sh half
-Requires=resh.socket
+Requires=bindsh.socket
 
 [Service]
 Type=simple
