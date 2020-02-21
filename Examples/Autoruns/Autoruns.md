@@ -27,7 +27,6 @@ in its `.wants/` directory to execute a command during the boot process.
 1. Generate the service file
 
 ```ini
-$ cat autorun.service
 ; https://www.freedesktop.org/software/systemd/man/systemd.service.html
 [Unit]
 Description=Basic service

