@@ -12,7 +12,7 @@ I'll be using the [MITRE ATT&CK](https://attack.mitre.org/) framework to guide t
 * [Examples/BasicService](Examples/BasicService/BasicService.md)
 * [Examples/Autoruns](Examples/Autoruns/Autoruns.md)
 * [Examples/BindShell](Examples/BindShell/BindShell.md)
-* [Examples/ProxyExecution](Examples/ProxyExecution/ProxyExecution.md)
+* [Examples/ProxyInitialization](Examples/ProxyInitialization/ProxyInitialization.md)
 * [Examples/ScheduledReverseShell](Examples/ScheduledReverseShell/ScheduledReverseShell.md)
 * [Examples/TmpFiles](Examples/TmpFiles/TmpFiles.md)
 * [Examples/VimShell](Examples/VimShell/VimShell.md)
@@ -21,8 +21,11 @@ I'll be using the [MITRE ATT&CK](https://attack.mitre.org/) framework to guide t
 
 * [systemctl](https://www.freedesktop.org/software/systemd/man/systemctl.html)
   * Primary means of interacting with systemd. Listing, loading, starting, stopping units all happens through here
-* [Unit Files](https://www.freedesktop.org/software/systemd/man/systemd.unit.html)
+* [Units](https://www.freedesktop.org/software/systemd/man/systemd.unit.html)
   * systemd's configuration file format. Every unit file type (service, timer, device, etc.) must follow a similar syntax
+  * Can be created dynamically at runtime via API calls - these are called transient units
+    * Exist only while running - get destroyed when deactivated or the system shuts down
+    * <https://www.freedesktop.org/wiki/Software/systemd/ControlGroupInterface/>
 
 ## Enterprise Tactics
 
@@ -41,28 +44,7 @@ Represents techniques that result in execution of adversary-controlled code on a
     * wants: A directory, `foo.service.wants/` in one of the unit search directories will implicitly add units from the directory as `Wants=` directives
     * requires: Same as above, but with `foo.service.requires/` and the `Requires=` directive
     * drop-ins: A drop-in directory can also be created (`foo.service.d/`) to load .conf files into the unit
-      * These must be placed in either the same directory that the service is in, so system-level and user-level cannot intermingle
-* [Tmpfiles](https://www.freedesktop.org/software/systemd/man/systemd-tmpfiles.html)
-  * `systemd-tmpfiles` is a system for handling temporary files (creating, deleting, truncating files, named pipes, etc.)
-  * This command is automatically scheduled by systemd under certain scenarios
-  * Can be used to write things to disk on shutdown and load them into memory on boot (names used for clarity - they aren't special triggers)
-
-    ```sh
-    $ cat on-shutdown.conf
-      #Type   Path            Mode    User    Group   Age     Argument
-      # create/truncate saved.txt and write a command out to it
-      F       /tmp/saved.txt  0700    1000    1000    1h      -
-      w       /tmp/saved.txt  0700    1000    1000    -       /bin/echo "hello world"
-    $ systemd-tmpfiles --create on-shutdown.conf 2>/dev/null; ls /tmp
-      saved.txt
-    $ /tmp/saved.txt
-      hello world
-    $ cat on-boot.conf
-      #Type   Path            Mode    User    Group   Age     Argument
-      r       /tmp/saved.txt  -       -       -       0
-    $ systemd-tmpfiles --remove on-boot.conf 2>/dev/null; ls /tmp
-    $
-    ```
+      * These must be placed in the same directory that the service is in, so system-level and user-level cannot intermingle
 
 ### Persistence
 
@@ -72,9 +54,6 @@ Any access, action, or configuration change to a system that gives an adversary 
   * systemd's bread and butter. Controls how systemd interacts with processes, including managing daemons
   * Before= and After= in a service file MIGHT be used alongside `shutdown.target` and `local-fs.target`, respectively, to load a file into memory and write to-disk to maintain persistence
     * `local-fs.target` is needed instead of `boot-complete.target` to ensure the system has the filesystem loaded
-  * Path-based activation is possible with `.path` unit files. See: <https://www.freedesktop.org/software/systemd/man/systemd.path.html>
-    * sytemd will monitor a chosen filepath with inotify and trigger a service when a change occurs
-    * These can also be used to create directories to watch without spawning a `mkdir` process or similar
 * User-Mode
   * Many systemd commands can use the `--user` flag to stay within the current user's context and not trigger an admin password prompt
   * The following workflow would allow someone with only user permissions to execute code
@@ -85,6 +64,18 @@ Any access, action, or configuration change to a system that gives an adversary 
 ### Privilege Escalation
 
 The result of actions that allows an adversary to obtain a higher level of permissions on a system or network.
+
+* [systemd-run]
+  * It's possible to invoke a root shell without using `sudo` or `su` to switch accounts.
+  This is a simple way to escalate privileges without tripping simple CLI detections
+    * The `auditd` module will still log a `USER_AUTH:res=success` message with the `acct` field indicating the username of the escalating account
+      and a `SERVICE_START` message with the unit name `run-u[0-9]+`
+
+  ```sh
+  $ systemd-run --shell
+  # whoami
+  root
+  ```
 
 ### Defense Evasion
 
@@ -127,11 +118,6 @@ Techniques an adversary may use to evade detection or avoid other defenses.
     This is probably not too useful to hiding on a system (easier to get caught) but could be used by security tools to loudly
     show they were disabled
 
-* [being an annoying shit]
-  * systemd can manage multiple unit files at once by specifying them separated with spaces
-  * (Speculation) You can force systemd to manage other services if you name yours like them, but with spaces
-     `ssh\ apache.service` != `ssh.service` `apache.service`
-
 ### Credential Access
 
 Techniques resulting in access to or control over system, domain, or service credentials that are used within an enterprise environment.
@@ -166,6 +152,7 @@ Techniques that allow the adversary to gain knowledge about the system and inter
 * [Busctl](https://www.freedesktop.org/software/systemd/man/busctl.html) (?)
   * Introspect and monitor the D-Bus bus
   * MIGHT be helpful to monitor or inspect buses of various units
+  * Based on code in PupyRAT, units can be injected/started directly on the bus
 * [Unit Conditions](https://www.freedesktop.org/software/systemd/man/systemd.unit.html#ConditionArchitecture=)
   * systemd will silently check to see if certain conditions about the running system are met before starting a unit
   * Could be good for fingerprinting, identifying VMs (see Defense Evasion), identifying security features, or limiting execution to specific hosts
