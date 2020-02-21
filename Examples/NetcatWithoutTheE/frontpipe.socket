@@ -1,0 +1,9 @@
+; https://www.freedesktop.org/software/systemd/man/systemd.socket.html
+[Unit]
+Description=frontpipe socket
+
+[Socket]
+ListenFIFO=/tmp/frontpipe
+RemoveOnStop=yes
+SocketMode=0666
+Service=revnc.service

