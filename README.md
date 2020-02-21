@@ -67,7 +67,7 @@ The result of actions that allows an adversary to obtain a higher level of permi
 
 * [systemd-run]
   * It's possible to invoke a root shell without using `sudo` or `su` to switch accounts.
-  This is a simple way to escalate privileges without tripping simple CLI detections
+  This is an easy way to escalate privileges without tripping simple CLI detections
     * The `auditd` module will still log a `USER_AUTH:res=success` message with the `acct` field indicating the username of the escalating account
       and a `SERVICE_START` message with the unit name `run-u[0-9]+`
 
@@ -110,6 +110,14 @@ Techniques an adversary may use to evade detection or avoid other defenses.
   ```sh
   $ systemd-detect-virt
   kvm
+  ```
+
+  * Another method for detecting virtualization is using `gdbus`:
+    * This comes from a blog post by the systemd developers: <http://0pointer.de/blog/projects/detect-virt.html>
+
+  ```sh
+  $ gdbus call --system --dest org.freedesktop.systemd1 --object-path /org/freedesktop/systemd1 --method org.freedesktop.DBus.Properties.Get org.freedesktop.systemd1.Manager Virtualization
+  (<'kvm'>,)
   ```
 
 * [ConditionSecurity](https://www.freedesktop.org/software/systemd/man/systemd.unit.html#ConditionSecurity=)
