@@ -1,6 +1,6 @@
 ; https://www.freedesktop.org/software/systemd/man/systemd.service.html
 [Unit]
-Description=Basic service
+Description=Autorun Service
 Documentation=https://github.com/infosec-intern/sneaky-systemd-shit
 
 [Service]
