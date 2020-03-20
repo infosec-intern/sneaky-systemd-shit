@@ -28,39 +28,9 @@ I'll be using the [MITRE ATT&CK](https://attack.mitre.org/) framework to guide t
     * Exist only while running - get destroyed when deactivated or the system shuts down
     * <https://www.freedesktop.org/wiki/Software/systemd/ControlGroupInterface/>
 
-## Enterprise Tactics
+## Miscellaneous Ideas
 
-<https://attack.mitre.org/tactics/enterprise/>
-
-### Initial Access
-
-Represents the vectors adversaries use to gain an initial foothold within a network.
-
-### Execution
-
-Represents techniques that result in execution of adversary-controlled code on a local or remote system.
-
-* [Unit Hooking](https://www.freedesktop.org/software/systemd/man/systemd.unit.html#Description)
-  * It's possible to hook into unit files without modifying the units themselves a couple ways:
-    * wants: A directory, `foo.service.wants/` in one of the unit search directories will implicitly add units from the directory as `Wants=` directives
-    * requires: Same as above, but with `foo.service.requires/` and the `Requires=` directive
-    * drop-ins: A drop-in directory can also be created (`foo.service.d/`) to load .conf files into the unit
-      * These must be placed in the same directory that the service is in, so system-level and user-level cannot intermingle
-
-### Persistence
-
-Any access, action, or configuration change to a system that gives an adversary a persistent presence on that system.
-
-* [Services](https://www.freedesktop.org/software/systemd/man/systemd.service.htm)
-  * systemd's bread and butter. Controls how systemd interacts with processes, including managing daemons
-  * Before= and After= in a service file MIGHT be used alongside `shutdown.target` and `local-fs.target`, respectively, to load a file into memory and write to-disk to maintain persistence
-    * `local-fs.target` is needed instead of `boot-complete.target` to ensure the system has the filesystem loaded
-* User-Mode
-  * Many systemd commands can use the `--user` flag to stay within the current user's context and not trigger an admin password prompt
-  * The following workflow would allow someone with only user permissions to execute code
-    1. Link a unit file from an arbitrary location to `$HOME/.config/systemd/user`
-    2. `systemctl --user daemon-reload` to reload the list of unit files in the user's context
-    3. `systemctl --user start $SERVICE` to run the code in the `ExecStart=` directive
+This section is for random ideas that don't quite earn their own section.
 
 ### Privilege Escalation
 
