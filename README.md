@@ -16,6 +16,7 @@ I'll be using the [MITRE ATT&CK](https://attack.mitre.org/) framework to guide t
 * [Examples/ProxyInitialization](Examples/ProxyInitialization/ProxyInitialization.md)
 * [Examples/ScheduledReverseShell](Examples/ScheduledReverseShell/ScheduledReverseShell.md)
 * [Examples/TmpFiles](Examples/TmpFiles/TmpFiles.md)
+* [Examples/TransientUnits](Examples/TransientUnits/TransientUnits.md)
 * [Examples/VimShell](Examples/VimShell/VimShell.md)
 
 ## Basic Components
