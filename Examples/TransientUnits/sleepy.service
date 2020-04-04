@@ -1,0 +1,7 @@
+; https://www.freedesktop.org/software/systemd/man/systemd.service.html
+[Unit]
+Description=Sleepy service
+
+[Service]
+Type=forking
+ExecStart=/bin/sleep 100
