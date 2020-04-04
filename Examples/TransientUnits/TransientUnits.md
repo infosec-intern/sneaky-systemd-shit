@@ -2,11 +2,9 @@
 
 ## Description
 
-This section walks through additional methods of generating systemd units outside the normal method of creating `.ini` files.
+This section walks through additional methods of generating systemd units outside the normal method of creating `.ini` files. Since there isn't a file on disk to refer to, systemd calls units created this way "transient units".
 
-Since there isn't a file on disk to refer to, systemd calls units created this way "transient units".
-
-* We'll emulate the unit file `basic.service` in most of the below examples.
+Both of these methods require either root access or interactive authentication (AFAICT via Polkit) to work. This seems to be an attempt to disallow scripts from creating/running units without apporpriate permissions, but I'm still investigating ways of getting around it.
 
 ### systemd-run
 
@@ -66,6 +64,10 @@ ExecStart=@/usr/bin/sleep "/usr/bin/sleep" "100"
 ```
 
 ### dbus API
+
+Dbus is a generic mechanism for communicating with other processes (inter-process communication, or IPC) both local and remote. It allows programs to expose APIs via objects, methods, and properties, and systemd makes heavy use of it. The systemd `Manager` object, and each unit type, have their own APIs, such as `StartUnit()`, `SetEnvironment()`, `ReloadUnit()`, etc. A quick review of the available objects in the link below will show that every action possible with the `systemctl` command is exposed via systemd's dbus API.
+
+**Source**: <https://www.freedesktop.org/wiki/Software/systemd/dbus/>
 
 #### Additional Notes
 
