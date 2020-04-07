@@ -12,6 +12,7 @@ I'll be using the [MITRE ATT&CK](https://attack.mitre.org/) framework to guide t
 * [Examples/BasicService](Examples/BasicService/BasicService.md)
 * [Examples/Autoruns](Examples/Autoruns/Autoruns.md)
 * [Examples/BindShell](Examples/BindShell/BindShell.md)
+* [Examples/DBus](Examples/DBus/DBus.md)
 * [Examples/NetcatWithoutTheE](Examples/NetcatWithoutTheE/NetcatWithoutTheE.md)
 * [Examples/ProxyInitialization](Examples/ProxyInitialization/ProxyInitialization.md)
 * [Examples/ScheduledReverseShell](Examples/ScheduledReverseShell/ScheduledReverseShell.md)

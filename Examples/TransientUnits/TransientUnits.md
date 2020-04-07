@@ -62,13 +62,3 @@ Description=/usr/bin/sleep 100
 ExecStart=
 ExecStart=@/usr/bin/sleep "/usr/bin/sleep" "100"
 ```
-
-### dbus API
-
-Dbus is a generic mechanism for communicating with other processes (inter-process communication, or IPC) both local and remote. It allows programs to expose APIs via objects, methods, and properties, and systemd makes heavy use of it. The systemd `Manager` object, and each unit type, have their own APIs, such as `StartUnit()`, `SetEnvironment()`, `ReloadUnit()`, etc. A quick review of the available objects in the link below will show that every action possible with the `systemctl` command is exposed via systemd's dbus API.
-
-**Source**: <https://www.freedesktop.org/wiki/Software/systemd/dbus/>
-
-#### Additional Notes
-
-#### Step by Step
