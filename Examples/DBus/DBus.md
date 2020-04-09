@@ -1,19 +1,73 @@
 # DBus
 
-Dbus is a generic mechanism for communicating with other processes (inter-process communication, or IPC) both local and remote. It allows programs to expose APIs via objects, methods, and properties, and systemd makes heavy use of it. The systemd `Manager` object, and each unit type, have their own APIs, such as `StartUnit()`, `SetEnvironment()`, `ReloadUnit()`, etc. Every action possible with the `systemctl` command is exposed via systemd's dbus API.
+Dbus is a generic mechanism for communicating with other processes (inter-process communication, or IPC). It allows programs to expose APIs via objects, methods, and properties, and systemd makes heavy use of it. The systemd `Manager` object, and each unit type, have their own APIs, such as `StartUnit()`, `SetEnvironment()`, `ReloadUnit()`, etc. Every action possible with the `systemctl` command is exposed via systemd's dbus API.
 
 **Source**: <https://www.freedesktop.org/wiki/Software/systemd/dbus/>
 
 ## Description
 
-### gdbus
+### busctl
 
-**Source**: <https://developer.gnome.org/gio/unstable/gdbus.html>
+**Source**: <https://www.freedesktop.org/software/systemd/man/busctl.html>
 
 #### Additional Notes
 
 * Unfortunately, systemd's dbus parameters aren't named in an obvious way when doing introspection, so we have to consult the dbus API documentation ([here](https://www.freedesktop.org/wiki/Software/systemd/dbus/)) to understand what systemd is looking for.
 * Interacting with units via dbus frequently requires specifying a service mode. From [the documentation](https://www.freedesktop.org/wiki/Software/systemd/dbus/), "The mode needs to be one of replace, fail, isolate, ignore-dependencies, ignore-requirements."
+* A quick way to view units running from non-standard locations is:
+
+```sh
+# Standard user-based locations on my systemd:
+#     /usr/lib/
+#     /run/user/${UID}
+$ busctl --user call org.freedesktop.systemd1 /org/freedesktop/systemd1 org.freedesktop.systemd1.Manager ListUnitFiles --j=short \
+      | jq '.data[][][0]' \
+      | grep -Ev "/usr/lib/|/run/user/${UID}"
+"/home/username/.config/systemd/user/basic.service"
+```
+
+```sh
+# Standard systemd-based locations:
+#     /lib/systemd/system
+#     /run/systemd
+#     /etc/systemd/system
+$ busctl --system call org.freedesktop.systemd1 /org/freedesktop/systemd1 org.freedesktop.systemd1.Manager ListUnitFiles --j=short \
+      | jq '.data[][][0]' \
+      | grep -Ev "/lib/systemd/system|/run/systemd|/etc/systemd/system"
+```
+
+#### Step by Step
+
+1. Install the `basic.service` file from the BasicService example into the systemd user folder and reload the units
+
+```sh
+$ mkdir -p ~/.config/systemd/user/
+$ ln -s `pwd`../BasicService/basic.service ~/.config/systemd/user/
+$ systemctl --user daemon-reload
+```
+
+2. View the parameters required by the `StartUnit` systemd method
+
+```sh
+$ busctl --user introspect org.freedesktop.systemd1 /org/freedesktop/systemd1 org.freedesktop.systemd1.Manager | grep -E "(NAME|StartUnit )"
+NAME                                      TYPE      SIGNATURE        RESULT/VALUE                             FLAGS
+.StartUnit                                method    ss               o                                        -
+```
+
+The parameter set shows the input parameters are two strings (indicated by `ss`). The first parameter is a service name, and the second is a service mode (consult the documentation or Additional Notes for how these were identified).
+
+3. Start the unit using `busctl`
+
+```sh
+$ busctl --user call org.freedesktop.systemd1 /org/freedesktop/systemd1 org.freedesktop.systemd1.Manager StartUnit ss "basic.service" "fail"
+o "/org/freedesktop/systemd1/job/3132"
+```
+
+### gdbus
+
+The `gdbus` program is a command-line tool that provides access to the various DBus APIs available in the system. It is specific to systems with the GNOME display manager installed. The KDE equivalent to this is `qdbus`.
+
+**Source**: <https://developer.gnome.org/gio/unstable/gdbus.html>
 
 #### Step by Step
 
@@ -34,7 +88,7 @@ $ gdbus introspect --session --dest org.freedesktop.systemd1 --object-path /org/
                 out o arg_2);
 ```
 
-The parameter set shows the first two values are input parameters (indicated by `in`) of type string (indicated by the `s`). The first parameter is a service name, and the second is a service mode (consult the documentation or Additional Notes for how these were identified).
+The parameter set shows the first two values are input parameters (indicated by `in`) of type string (indicated by the `s`). The first parameter is a service name, and the second is a service mode (consult the documentation or Additional Notes in the `busctl` section for how these were identified).
 
 3. Start the unit using `gdbus`
 
@@ -42,14 +96,6 @@ The parameter set shows the first two values are input parameters (indicated by 
 $ gdbus call --session --dest org.freedesktop.systemd1 --object-path /org/freedesktop/systemd1 --method org.freedesktop.systemd1.Manager.StartUnit basic.service fail
 (objectpath '/org/freedesktop/systemd1/job/2769',)
 ```
-
-### busctl
-
-**Source**: <>
-
-#### Additional Notes
-
-#### Step by Step
 
 ### dbus API
 
