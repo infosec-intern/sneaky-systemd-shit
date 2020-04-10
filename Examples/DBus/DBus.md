@@ -4,6 +4,13 @@
 
 Dbus is a generic mechanism for communicating with other processes (inter-process communication, or IPC). It allows programs to expose APIs via objects, methods, and properties, and systemd makes heavy use of it. The systemd `Manager` object, and each unit type, have their own APIs, such as `StartUnit()`, `SetEnvironment()`, `ReloadUnit()`, etc. Every action possible with the `systemctl` command is exposed via systemd's dbus API.
 
+Important terms for the rest of the document are listed below:
+
+* `SERVICE`: The service that will invoke the methods we want to call on the specified objects. In our case, it will always be `org.freedesktop.systemd1`.
+* `OBJECT`: Required for both `call` and `introspect`. Indicates the path to the object that will invoke our methods. Looks like a filesystem path. In our case, it will always be `/org/freedesktop/systemd1`.
+* `INTERFACE`: Required for `call`. Optional for `introspect`. Indicates a group of related methods and properties. In our case, we'll use the `org.freedesktop.systemd1.Manager` interface to interact with systemd.
+* `METHOD`: Required for `call`. Not used by `introspect`. The name of the method to invoke.
+
 **Source**: <https://www.freedesktop.org/wiki/Software/systemd/dbus/>
 
 ## Additional Notes
@@ -13,6 +20,11 @@ Dbus is a generic mechanism for communicating with other processes (inter-proces
 * Interacting with units via dbus frequently requires specifying a service mode. From [the documentation](https://www.freedesktop.org/wiki/Software/systemd/dbus/), "The mode needs to be one of replace, fail, isolate, ignore-dependencies, ignore-requirements."
 
 ## busctl
+
+The `busctl` program is a command-line tool that provides access to the various DBus APIs available in the system. It is bundled with the systemd package and is an incredibly powerful tool for inspecting and interacting with DBus. The two subcommands used below, `introspect` and `call`, require a few parameters to call the proper DBus methods:
+
+* `introspect SERVICE OBJECT [INTERFACE]`
+* `call SERVICE OBJECT INTERFACE METHOD [SIGNATURE [ARGUMENT...]]`
 
 **Source**: <https://www.freedesktop.org/software/systemd/man/busctl.html>
 
@@ -95,7 +107,14 @@ $ gdbus introspect --session --dest org.freedesktop.systemd1 --object-path /org/
                     out a(sss) arg_3);
 ```
 
+The parameter set shows the input parameters are an array of strings (`as`) and two booleans (`bb`). The first parameter is a list of files to link. The second parameter indicates whether to install this unit in the user's runtime directory at `$XDG_RUNTIME_DIR` (true) or the user's `~/.config/systemd/user` directory (false). The third parameter is a boolean indicating whether to force the link creation or not (consult the Additional Notes for how these were identified).
+
 2. Install the `basic.service` file from the BasicService example into the systemd user folder
+
+```sh
+$ gdbus call --session --dest org.freedesktop.systemd1 --object-path /org/freedesktop/systemd1 --method org.freedesktop.systemd1.Manager.LinkUnitFiles "['/tmp/basic.service']" false false
+([('symlink', '/home/username/.config/systemd/user/basic.service', '/tmp/basic.service')],)
+```
 
 3. View the parameter types required by the `StartUnit` systemd method
 
