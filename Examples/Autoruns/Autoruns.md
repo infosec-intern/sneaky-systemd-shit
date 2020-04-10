@@ -80,6 +80,7 @@ These directories are easy places to store malicious commands or environment inf
 
 ### Additional Notes
 
+* This appears to be the route PupyRAT takes when loading new units (seems like it targets the dbus.service unit directly)
 * This particular example leverages systemd to perform code injection via LD_PRELOAD. Here are some additional sources on how LD_PRELOAD works:
   * https://jvns.ca/blog/2014/11/27/ld-preload-is-super-fun-and-easy/
   * http://www.goldsborough.me/c/low-level/kernel/2016/08/29/16-48-53-the_-ld_preload-_trick/
