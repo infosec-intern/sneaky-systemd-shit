@@ -42,7 +42,7 @@ $ busctl --system call org.freedesktop.systemd1 /org/freedesktop/systemd1 org.fr
 
 ```sh
 $ mkdir -p ~/.config/systemd/user/
-$ ln -s `pwd`../BasicService/basic.service ~/.config/systemd/user/
+$ systemctl --user link `pwd`../BasicService/basic.service ~/.config/systemd/user/
 $ systemctl --user daemon-reload
 ```
 
@@ -75,7 +75,7 @@ The `gdbus` program is a command-line tool that provides access to the various D
 
 ```sh
 $ mkdir -p ~/.config/systemd/user/
-$ ln -s `pwd`../BasicService/basic.service ~/.config/systemd/user/
+$ systemctl --user link `pwd`../BasicService/basic.service ~/.config/systemd/user/
 $ systemctl --user daemon-reload
 ```
 
