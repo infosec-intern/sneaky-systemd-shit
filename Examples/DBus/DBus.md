@@ -12,11 +12,11 @@ Dbus is a generic mechanism for communicating with other processes (inter-proces
 * When using the dbus method `LinkUnitFiles` there is no need to reload the systemd configuration via the `systemctl daemon-reload` command. This is also the case when using `systemctl link`, because it uses this method. There is also no need to ensure the relevant folders exist in the path (e.g. `~/.config/systemd/user`). Systemd will create them if necessary
 * Interacting with units via dbus frequently requires specifying a service mode. From [the documentation](https://www.freedesktop.org/wiki/Software/systemd/dbus/), "The mode needs to be one of replace, fail, isolate, ignore-dependencies, ignore-requirements."
 
-### busctl
+## busctl
 
 **Source**: <https://www.freedesktop.org/software/systemd/man/busctl.html>
 
-#### Additional Notes
+### Additional Notes
 
 * `busctl` will suggest or auto-complete (using <TAB>) many of the values it needs up until method parameters are required. This is a great way to quickly view the parameter types for a method without using introspection
 * A quick way to view units running from non-standard locations  with `busctl` is:
@@ -41,7 +41,7 @@ $ busctl --system call org.freedesktop.systemd1 /org/freedesktop/systemd1 org.fr
       | grep -Ev "/lib/systemd/system|/run/systemd|/etc/systemd/system"
 ```
 
-#### Step by Step
+### Step by Step
 
 1. View the parameters required by the `LinkUnitFiles` method
 
@@ -77,13 +77,13 @@ $ busctl --user call org.freedesktop.systemd1 /org/freedesktop/systemd1 org.free
 o "/org/freedesktop/systemd1/job/3132"
 ```
 
-### gdbus
+## gdbus
 
 The `gdbus` program is a command-line tool that provides access to the various DBus APIs available in the system. It is specific to systems with the GNOME display manager installed. The KDE equivalent to this is `qdbus`.
 
 **Source**: <https://www.freedesktop.org/software/gstreamer-sdk/data/docs/latest/gio/gdbus.html>
 
-#### Step by Step
+### Step by Step
 
 1. View the parameter types required by the `LinkUnitFiles` systemd method
 
@@ -113,10 +113,10 @@ $ gdbus call --session --dest org.freedesktop.systemd1 --object-path /org/freede
 (objectpath '/org/freedesktop/systemd1/job/2769',)
 ```
 
-### dbus API
+## dbus API
 
 **Source**: <https://www.freedesktop.org/wiki/Software/systemd/dbus/>
 
-#### Additional Notes
+### Additional Notes
 
-#### Step by Step
+### Step by Step
