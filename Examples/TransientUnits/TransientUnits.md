@@ -6,13 +6,13 @@ This section walks through additional methods of generating systemd units outsid
 
 Both of these methods require either root access or interactive authentication (AFAICT via Polkit) to work. This seems to be an attempt to disallow scripts from creating/running units without apporpriate permissions, but I'm still investigating ways of getting around it.
 
-### systemd-run
+## systemd-run
 
 Systemd comes with a helpful tool for generating transient units: `systemd-run`. This is primarily meant to execute `.service` and `.scope` units, but it can also be used to create transient `.path`, `.timer`, and `.socket` units, which are linked to transient `.service` and `.scope` units. During execution, transient units can be accessed with the same tools that normal units can be accessed with; namely, `systemctl`. In fact, during execution, unit files are placed in the `/run/systemd/transient/` directory for the lifespan of the service.
 
 **Source**: <https://www.freedesktop.org/software/systemd/man/systemd-run.html>
 
-#### Step by Step
+### Step by Step
 
 1. Run a basic `echo` command and check the journal for output
 
@@ -61,4 +61,22 @@ Description=/usr/bin/sleep 100
 [Service]
 ExecStart=
 ExecStart=@/usr/bin/sleep "/usr/bin/sleep" "100"
+```
+
+## DBus
+
+Refer to [../DBus/Dbus.md] for more information on systemd's dbus API.
+
+### Step by Step
+
+```sh
+# TODO: figure out what "no such device or address" refers to
+$ busctl --user call org.freedesktop.systemd1 /org/freedesktop/systemd1 org.freedesktop.systemd1.Manager StartTransientUnit "ssa(sv)a(sa(sv))" transient.service replace 2 Type as 1 simple ExecStart as 1 "/bin/touch /tmp/test.txt" 0
+No such device or address
+```
+
+```sh
+# TODO: figure out what "no such device or address" refers to
+ gdbus call --session --dest org.freedesktop.systemd1 --object-path /org/freedesktop/systemd1 --method org.freedesktop.systemd1.Manager.StartTransientUnit "transient.service" "replace" "[('Type',<'simple'>),('ExecStart',<'/bin/echo hello'>)]" []
+Error: GDBus.Error:System.Error.ENXIO: No such device or address
 ```
