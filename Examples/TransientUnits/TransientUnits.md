@@ -67,13 +67,15 @@ ExecStart=@/usr/bin/sleep "/usr/bin/sleep" "100"
 
 Refer to [../DBus/Dbus.md] for more information on systemd's dbus API.
 
-### Step by Step
+### busctl
 
 ```sh
 # TODO: figure out what "no such device or address" refers to
 $ busctl --user call org.freedesktop.systemd1 /org/freedesktop/systemd1 org.freedesktop.systemd1.Manager StartTransientUnit "ssa(sv)a(sa(sv))" transient.service replace 2 Type as 1 simple ExecStart as 1 "/bin/touch /tmp/test.txt" 0
 No such device or address
 ```
+
+### gdbus
 
 ```sh
 # TODO: figure out what "no such device or address" refers to

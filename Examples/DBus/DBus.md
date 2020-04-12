@@ -31,6 +31,7 @@ The `busctl` program is a command-line tool that provides access to the various 
 ### Additional Notes
 
 * `busctl` will suggest or auto-complete (using <TAB>) many of the values it needs up until method parameters are required. This is a great way to quickly view the parameter types for a method without using introspection
+* `busctl` requires method parameters' types and the lengths of arrays and dictionaries to be specified before they are passed. Luckily, the autocomplete previously mentioned will auto-complete a method's parameter types (See **Step 2** and **Step 4** below), but it will not auto-complete parameters for more complex data types like variants - it has no way of knowing what type you want to define at runtime. See the **busctl** section of the [TransientUnits](../TransientUnits/TransientUnits.md#busctl) page for an example.
 * A quick way to view units running from non-standard locations  with `busctl` is:
 
 ```sh
@@ -94,6 +95,11 @@ o "/org/freedesktop/systemd1/job/3132"
 The `gdbus` program is a command-line tool that provides access to the various DBus APIs available in the system. It is specific to systems with the GNOME display manager installed. The KDE equivalent to this is `qdbus`.
 
 **Source**: <https://www.freedesktop.org/software/gstreamer-sdk/data/docs/latest/gio/gdbus.html>
+
+### Additional Notes
+
+* `gdbus` requires parameters be sent in GLib's serialized format. Typically, this means passing in simple values (strings, ints, bools) just like we would with `busctl`, and passing more complex values as their typical programming symbols surrounded by quotes. For example, Python lists (`[]`), correspond to DBus lists, and must be surrounded by quotes when methods require lists to be passed. See **Step 2** below for a clear example.
+* DBus' variant types must be surrounded by `<>`. See [this AskUbuntu post](https://askubuntu.com/questions/359587/how-to-pass-asv-arguments-to-gdbus) or the **gdbus** section of the [TransientUnits](../TransientUnits/TransientUnits.md#gdbus) page for an example.
 
 ### Step by Step
 
