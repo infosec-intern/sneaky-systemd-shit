@@ -69,9 +69,25 @@ Refer to [../DBus/Dbus.md] for more information on systemd's dbus API.
 
 ### busctl
 
+`busctl` can be used to run transient units via the `StartTransientUnit` method call. The method requires some complex parameter types to work, which are explained below:
+
+* `s`: Name of the transient unit. We're using "transient.service"
+* `s`: Mode to run unit in - typically `fail` or `replace`. We're using "replace"
+* `a(sv)`: Array of properties to assign to the unit. The type is technically a structure (`(sv)`) with first parameter of `s` and second of `v`, or variant, which can be any other parameter type. The number of properties must be defined ahead of time, and each property value is defined as an array of strings for our purposes. This whole array is broken down as follows:
+
+```txt
+Number of properties: 2
+1st property name: Type
+1st property values - type, length, value: as 1 simple
+2nd property name: ExecStart
+2nd property values - type, length, value: as 1 "/bin/touch /tmp/test.txt"
+```
+
+* `a(sa(sv))`: Defined as "aux" in the official documentation and not used by us. We just set it to a "0" length array.
+
 ```sh
 # TODO: figure out what "no such device or address" refers to
-$ busctl --user call org.freedesktop.systemd1 /org/freedesktop/systemd1 org.freedesktop.systemd1.Manager StartTransientUnit "ssa(sv)a(sa(sv))" transient.service replace 2 Type as 1 simple ExecStart as 1 "/bin/touch /tmp/test.txt" 0
+$ busctl --user call org.freedesktop.systemd1 /org/freedesktop/systemd1 org.freedesktop.systemd1.Manager StartTransientUnit "ssa(sv)a(sa(sv))" transient.service replace 2 Type as 1 simple ExecStart as 1 "echo hello" 0
 No such device or address
 ```
 
@@ -79,6 +95,6 @@ No such device or address
 
 ```sh
 # TODO: figure out what "no such device or address" refers to
- gdbus call --session --dest org.freedesktop.systemd1 --object-path /org/freedesktop/systemd1 --method org.freedesktop.systemd1.Manager.StartTransientUnit "transient.service" "replace" "[('Type',<'simple'>),('ExecStart',<'/bin/echo hello'>)]" []
+$ gdbus call --session --dest org.freedesktop.systemd1 --object-path /org/freedesktop/systemd1 --method org.freedesktop.systemd1.Manager.StartTransientUnit "transient.service" "replace" "[('Type',<'simple'>),('ExecStart',<'echo hello'>)]" []
 Error: GDBus.Error:System.Error.ENXIO: No such device or address
 ```
