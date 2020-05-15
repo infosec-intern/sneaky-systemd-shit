@@ -18,6 +18,13 @@ Important terms for the rest of the document are listed below:
 * Unfortunately, systemd's dbus parameters aren't named in an obvious way when doing introspection, so we have to consult the dbus API documentation ([here](https://www.freedesktop.org/wiki/Software/systemd/dbus/)) and look up the function names to understand what systemd is looking for.
 * When using the dbus method `LinkUnitFiles` there is no need to reload the systemd configuration via the `systemctl daemon-reload` command. This is also the case when using `systemctl link`, because it uses this method. There is also no need to ensure the relevant folders exist in the path (e.g. `~/.config/systemd/user`). Systemd will create them if necessary
 * Interacting with units via dbus frequently requires specifying a service mode. From [the documentation](https://www.freedesktop.org/wiki/Software/systemd/dbus/), "The mode needs to be one of replace, fail, isolate, ignore-dependencies, ignore-requirements."
+* Much like Windows' COM GUID interfaces, DBus exposes all bus names with unique identifiers, rather than human-readable names. In all of the examples below, the human-readable name `org.freedesktop.systemd1` is used for ease of learning, but the universal identifer actually used by DBus is `:1.2`. This can be found using the following command and tracing the value found in CONNECTION column:
+
+```sh
+$ busctl list --unique | grep -E "(org.freedesktop.systemd1|CONNECTION)"
+NAME                                       PID PROCESS         USER             CONNECTION    UNIT                      SESSION    DESCRIPTION
+org.freedesktop.systemd1                     1 systemd         root             :1.2          init.scope                -          -
+```
 
 ## busctl
 
@@ -32,6 +39,13 @@ The `busctl` program is a command-line tool that provides access to the various 
 
 * `busctl` will suggest or auto-complete (using <TAB>) many of the values it needs up until method parameters are required. This is a great way to quickly view the parameter types for a method without using introspection
 * `busctl` requires method parameters' types and the lengths of arrays and dictionaries to be specified before they are passed. Luckily, the autocomplete previously mentioned will auto-complete a method's parameter types (See **Step 2** and **Step 4** below), but it will not auto-complete parameters for more complex data types like variants - it has no way of knowing what type you want to define at runtime. See the **busctl** section of the [TransientUnits](../TransientUnits/TransientUnits.md#busctl) page for an example.
+* Object properties can be viewed individually with the `get-property` subcommand. For example, a specific user's home directory can be viewed with the following command:
+
+```sh
+$ busctl get-property org.freedesktop.Accounts /org/freedesktop/Accounts/User${UID} org.freedesktop.Accounts.User HomeDirectory
+s "/home/username"
+```
+
 * A quick way to view units running from non-standard locations  with `busctl` is:
 
 ```sh
@@ -65,6 +79,14 @@ NAME                                      TYPE      SIGNATURE        RESULT/VALU
 ```
 
 The parameter set shows the input parameters are an array of strings (`as`) and two booleans (`bb`). The first parameter is a list of files to link. The second parameter indicates whether to install this unit in the user's runtime directory at `$XDG_RUNTIME_DIR` (true) or the user's `~/.config/systemd/user` directory (false). The third parameter is a boolean indicating whether to force the link creation or not (consult the Additional Notes for how these were identified).
+
+Additionally, as specified in the "DBus > Additional Notes" section above, the unique bus name can be specified here. Oddly enough, the `--user` flag must be omitted to use the unique bus name even though it does not ask for elevated credentials. For example:
+
+```sh
+$ busctl introspect :1.2 /org/freedesktop/systemd1 org.freedesktop.systemd1.Manager | grep -E "(NAME|LinkUnitFiles)"
+NAME                                      TYPE      SIGNATURE        RESULT/VALUE                             FLAGS
+.LinkUnitFiles                            method    asbb             a(sss)                                   -
+```
 
 2. Install the `basic.service` file from the BasicService example into the systemd user folder
 

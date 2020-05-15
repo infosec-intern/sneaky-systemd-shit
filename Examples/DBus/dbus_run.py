@@ -63,7 +63,7 @@ def pupy_list_services(service_filter=None):
         logging.info('Can Stop? {}'.format(True if unit_props['CanStop'] == 1 else False))
         logging.info('Service Type: {}'.format(svc_props['Type']))
         logging.info('Current command: {}'.format(exec_start))
-        logging.info()
+        logging.info('')
 
 def start_transient_unit(cmd, **kwargs):
     '''
