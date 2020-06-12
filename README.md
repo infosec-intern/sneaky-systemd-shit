@@ -117,7 +117,7 @@ Techniques that allow the adversary to gain knowledge about the system and inter
     * If this is not available, `systemctl` can be substituted like below:
 
     ```sh
-    $ for p in $(systemctl --user show -p UnitPath | cut -d= -f2); do echo $p; done
+    $ systemctl --user show -p UnitPath | cut -d= -f2 | sed -e 's/ /\n/g'
     /home/privileged/.config/systemd/user
     /etc/systemd/user
     /run/user/1000/systemd/user
@@ -129,14 +129,19 @@ Techniques that allow the adversary to gain knowledge about the system and inter
     /usr/lib/systemd/user
     ```
 
-  * `systemd-path` displays a list of paths with human-readable purposes (e.g. temporary: /tmp)
-* [Busctl](https://www.freedesktop.org/software/systemd/man/busctl.html) (?)
-  * Introspect and monitor the D-Bus bus
-  * MIGHT be helpful to monitor or inspect buses of various units
-  * Based on code in PupyRAT, units can be injected/started directly on the bus
+  * `systemd-path` displays a list of paths with human-readable purposes (e.g. temporary: /tmp). Example:
+
+  ```sh
+  $ systemd-path | grep binaries
+  system-binaries: /usr/bin
+  user-binaries: /home/user/.local/bin
+  search-binaries: /home/user/.local/bin:/home/user/.local/bin:/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin:/usr/games:/usr/local/games
+  search-binaries-default: /usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin
+  ```
+
 * [Unit Conditions](https://www.freedesktop.org/software/systemd/man/systemd.unit.html#ConditionArchitecture=)
   * systemd will silently check to see if certain conditions about the running system are met before starting a unit
-  * Could be good for fingerprinting, identifying VMs (see Defense Evasion), identifying security features, or limiting execution to specific hosts
+  * Could be good for fingerprinting, identifying VMs & security features (see Defense Evasion), or limiting execution to specific hosts
 
 ### Lateral Movement
 
