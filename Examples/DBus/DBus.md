@@ -167,3 +167,62 @@ $ gdbus call --session --dest org.freedesktop.systemd1 --object-path /org/freede
 ### Additional Notes
 
 ### Step by Step
+
+## Monitoring Signals
+
+DBus offers a messaging framework that lets developers listen for specific events from supporting applications.
+
+## Additional Notes
+
+* Introspecting the signals emitted by the systemd1.Manager object will show us the data types returned by each signal. Unfortunately, parameter names are not included in the introspection, so we'll have to consult the online documentation [here](https://www.freedesktop.org/wiki/Software/systemd/dbus/) to view those. Additionally, I used `busctl` here because I found it easier to filter the output than `gdbus`, but it is possible to introspect with `gdbus` as well:
+
+```sh
+$ busctl --user introspect org.freedesktop.systemd1 /org/freedesktop/systemd1 org.freedesktop.systemd1.Manager | grep -E "(NAME|signal)"
+NAME                                      TYPE      SIGNATURE        RESULT/VALUE                             FLAGS
+.JobNew                                   signal    uos              -                                        -
+.JobRemoved                               signal    uoss             -                                        -
+.Reloading                                signal    b                -                                        -
+.StartupFinished                          signal    tttttt           -                                        -
+.UnitFilesChanged                         signal    -                -                                        -
+.UnitNew                                  signal    so               -                                        -
+.UnitRemoved                              signal    so               -                                        -
+```
+
+### Step by Step
+
+1. Start monitoring the systemd object on the local user session's bus
+
+```sh
+$ gdbus monitor --session --dest org.freedesktop.systemd1 --object-path /org/freedesktop/systemd1
+Monitoring signals on object /org/freedesktop/systemd1 owned by org.freedesktop.systemd1
+The name org.freedesktop.systemd1 is owned by :1.0
+```
+
+2. In a new terminal window, install the `basic.service` file from the BasicService example into the systemd user folder
+
+```sh
+$ gdbus call --session --dest org.freedesktop.systemd1 --object-path /org/freedesktop/systemd1 --method org.freedesktop.systemd1.Manager.LinkUnitFiles "['/tmp/basic.service']" false false
+([('symlink', '/home/username/.config/systemd/user/basic.service', '/tmp/basic.service')],)
+```
+
+3. Start the unit using `gdbus`
+
+```sh
+$ gdbus call --session --dest org.freedesktop.systemd1 --object-path /org/freedesktop/systemd1 --method org.freedesktop.systemd1.Manager.StartUnit basic.service fail
+(objectpath '/org/freedesktop/systemd1/job/1332',)
+```
+
+4. Stop the unit using `gdbus`
+
+```sh
+$ gdbus call --session --dest org.freedesktop.systemd1 --object-path /org/freedesktop/systemd1 --method org.freedesktop.systemd1.Manager.StopUnit basic.service fail
+(objectpath '/org/freedesktop/systemd1/job/1351',)
+```
+
+5. Check the events displayed in the monitoring window
+
+```txt
+/org/freedesktop/systemd1: org.freedesktop.systemd1.Manager.JobNew (uint32 1332, objectpath '/org/freedesktop/systemd1/job/1332', 'basic.service')
+/org/freedesktop/systemd1: org.freedesktop.systemd1.Manager.JobNew (uint32 1351, objectpath '/org/freedesktop/systemd1/job/1351', 'basic.service')
+/org/freedesktop/systemd1: org.freedesktop.systemd1.Manager.JobRemoved (uint32 1351, objectpath '/org/freedesktop/systemd1/job/1351', 'basic.service', 'done')
+```
