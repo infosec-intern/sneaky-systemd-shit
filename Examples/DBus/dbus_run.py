@@ -11,7 +11,7 @@ import re
 Useful resources
     https://www.freedesktop.org/wiki/Software/systemd/dbus/
     https://dbus.freedesktop.org/doc/dbus-python/tutorial.html
-    https://medium.com/@trstringer/talking-to-systemd-through-dbus-with-python-53b903ee88b1
+    https://trstringer.com/python-systemd-dbus/
 '''
 
 SYS_BUS = dbus.SystemBus()
