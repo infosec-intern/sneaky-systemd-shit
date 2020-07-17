@@ -83,7 +83,7 @@ def print_jobremoved(job_id: dbus.UInt32, job_path: dbus.ObjectPath, unit_name: 
         logging.exception("Couldn't print info for signal JobRemoved '%s' (%s): %s", job_id, unit_name, err)
 
 def print_reloading(active: bool):
-    logging.info("Received signal 'Reloading': %s", active)
+    logging.info("Started reloading" if active else "Finished reloading")
 
 def print_startupfinished(firmware, loader, kernel, initrd, userspace, total):
     logging.info("Received signal 'StartupFinished': %s, %s, %s, %s, %s, %s", firmware, loader, kernel, initrd, userspace, total)
