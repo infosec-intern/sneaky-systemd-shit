@@ -85,7 +85,7 @@ def print_jobremoved(job_id: dbus.UInt32, job_path: dbus.ObjectPath, unit_name: 
 def print_reloading(active: bool):
     logging.info("Started reloading" if active else "Finished reloading")
 
-def print_startupfinished(firmware, loader, kernel, initrd, userspace, total):
+def print_startupfinished(firmware: int, loader: int, kernel: int, initrd: int, userspace: int, total: int):
     logging.info("Received signal 'StartupFinished': %s, %s, %s, %s, %s, %s", firmware, loader, kernel, initrd, userspace, total)
 
 def print_unitnew(unit_id: dbus.UInt32, unit_path: dbus.ObjectPath):
