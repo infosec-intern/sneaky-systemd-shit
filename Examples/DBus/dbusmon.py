@@ -54,8 +54,11 @@ def get_unittype(unit_id: str):
 
 def print_jobnew(job_id: dbus.UInt32, job_path: dbus.ObjectPath, unit_name: dbus.String):
     try:
-        job_properties = get_properties(job_path, 'org.freedesktop.systemd1.Job')
-        _, unit_path = job_properties['Unit']
+        # sometimes a Job ID will not exist when querying its properties this way...
+        #   job_properties = get_properties(job_path, 'org.freedesktop.systemd1.Job')
+        #   _, unit_path = job_properties['Unit']
+        # so we'll use the systemd Manager object to grab our unit path instead - it will always return a value if a unit is loaded
+        unit_path = systemd.get_dbus_method('GetUnit', dbus_interface='org.freedesktop.systemd1.Manager')(unit_name)
         unit_properties = get_properties(unit_path, 'org.freedesktop.systemd1.Unit')
         # real_unit_path displays path to actual file on filesystem
         # unit_path displays systemd object path - always starts with '/org/freedesktop/systemd1/unit/'
@@ -68,13 +71,16 @@ def print_jobnew(job_id: dbus.UInt32, job_path: dbus.ObjectPath, unit_name: dbus
         else:
             logging.info("Job %d ran unit '%s': %s @ '%s'", job_id, job_path, unit_name, real_unit_path)
     except dbus.exceptions.DBusException as err:
-        logging.exception("Couldn't print info for job '%s' (%s): %s", job_id, unit_name, err)
+        logging.exception("Couldn't print info for signal JobNew '%s' (%s): %s", job_id, unit_name, err)
 
 def print_jobremoved(job_id: dbus.UInt32, job_path: dbus.ObjectPath, unit_name: dbus.String, result: dbus.String):
-    if result == 'done':
-        logging.info("Job %d finished with unit '%s'", job_id, unit_name)
-    else:
-        logging.info("Received signal 'JobRemoved': %s %s %s %s", job_id, job_path, unit_name, result)
+    try:
+        if result == 'done':
+            logging.info("Job %d finished with unit '%s'", job_id, unit_name)
+        else:
+            logging.info("Received signal 'JobRemoved': %s %s %s %s", job_id, job_path, unit_name, result)
+    except dbus.exceptions.DBusException as err:
+        logging.exception("Couldn't print info for signal JobRemoved '%s' (%s): %s", job_id, unit_name, err)
 
 def print_reloading(active: bool):
     logging.info("Received signal 'Reloading': %s", active)
