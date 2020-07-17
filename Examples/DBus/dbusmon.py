@@ -60,14 +60,15 @@ def print_jobnew(job_id: dbus.UInt32, job_path: dbus.ObjectPath, unit_name: dbus
         # real_unit_path displays path to actual file on filesystem
         # unit_path displays systemd object path - always starts with '/org/freedesktop/systemd1/unit/'
         real_unit_path = unit_properties.get('FragmentPath')
-        if unit_properties.get('Id', '').endswith('.service'):
-            svc_properties = get_properties(unit_path, 'org.freedesktop.systemd1.Service')
-            _, cli, _, _, _, _, _, _, _, _  = svc_properties.get('ExecStart', [])[0]
+        unit_type = get_unittype(unit_name)
+        sub_properties = get_properties(unit_path, "org.freedesktop.systemd1.{}".format(unit_type))
+        if unit_type == 'Service':
+            _, cli, _, _, _, _, _, _, _, _  = sub_properties.get('ExecStart', [])[0]
             logging.info("Job %d ran '%s': \"%s\"", job_id, real_unit_path, ' '.join(cli))
         else:
             logging.info("Job %d ran unit '%s': %s @ '%s'", job_id, job_path, unit_name, real_unit_path)
     except dbus.exceptions.DBusException as err:
-        logging.error("Couldn't print info for job '%s' (%s): %s", job_id, unit_name, err)
+        logging.exception("Couldn't print info for job '%s' (%s): %s", job_id, unit_name, err)
 
 def print_jobremoved(job_id: dbus.UInt32, job_path: dbus.ObjectPath, unit_name: dbus.String, result: dbus.String):
     if result == 'done':
