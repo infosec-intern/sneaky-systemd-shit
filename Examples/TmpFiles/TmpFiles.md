@@ -26,6 +26,22 @@ The sequence of commands creates and executes a file using the `systemd-tmpfiles
 * FIFO files, like the one used in [ScheduledRevShell.md](../ScheduledReverseShell/ScheduledRevShell.md) can be created with the `p` type
 * The "Age" field in each directive specifies how old the file must be (in seconds) before it is cleaned up automatically by the system.
   Setting this field to 0 tells systemd to clean the file/folder every time its cleanup task runs.
+* There are a couple alternative methods for invoking directives within a configuration:
+  * On the command-line by referencing an absolute path
+
+  ```sh
+  $ systemd-tmpfiles --remove `pwd`/exec-file.conf
+  $ ls /tmp/.a/
+    ls: cannot access '/tmp/.a/': No such file or directory
+  ```
+
+  * By passing directives through STDIN
+
+  ```sh
+  $ cat exec-file.conf | systemd-tmpfiles --remove -
+  $ ls /tmp/.a/
+    ls: cannot access '/tmp/.a/': No such file or directory
+  ```
 
 ## Step by Step
 
