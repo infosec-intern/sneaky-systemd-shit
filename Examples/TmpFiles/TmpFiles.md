@@ -120,3 +120,22 @@ There are a couple alternative methods for invoking directives within a configur
   $ ls /tmp/.a/
   ls: cannot access '/tmp/.a/': No such file or directory
   ```
+
+### Directive Replacement
+
+It's possible to combine any invocation method (STDIN, filepath, special directory) with the `--replace` flag to override specific directives in the path specified by the flag.
+For example, if we want the `/tmp/.a/hello.sh` script to print "goodbye $USER" instead of "hello $USER", we would do the following:
+
+```sh
+$ echo "w /tmp/.a/hello.sh - - - - /bin/echo \"goodbye %u\"" | systemd-tmpfiles --user --create --replace=/home/thomas/.config/user-tmpfiles.d/exec-file.conf -
+$ /tmp/.a/hello.sh
+goodbye ch0mler
+```
+
+And the directive will only be temporarily replaced, so the next time `systemd-tmpfiles` is run, it will perform the exact same actions as before:
+
+```sh
+$ systemd-tmpfiles --remove --user
+$ /tmp/.a/hello.sh
+bash: /tmp/.a/hello.sh: No such file or directory
+```
